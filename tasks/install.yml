@@ -1,0 +1,47 @@
+---
+
+- name: "Copy tar gz"
+  become: yes
+  copy:
+    src: "{{ redis_download_path }}/{{ redis_tarball }}.tar.gz"
+    dest: "/tmp/{{ redis_tarball }}.tar.gz"
+    
+- name: Extract the Redis tarball
+  become: yes
+  unarchive:
+    src: "/tmp/{{ redis_tarball }}.tar.gz"
+    dest: "/tmp/"
+    copy: no
+    creates: "/tmp/{{ redis_tarball }}"
+
+- name: Install Redis
+  become: yes
+  command: "cp -R /tmp/{{ redis_tarball }} {{ redis.install_dir }}"
+  args:
+    creates: "{{ redis.install_dir }}"
+    removes: "/tmp/{{ redis_tarball }}"
+
+
+- name: Ensure Systemd Service Configuraiton
+  become: yes
+  template:
+    src: redis.service.j2
+    dest: /etc/systemd/system/redis.service
+    mode: 0764
+  notify:
+    - start redis
+  when: ansible_service_mgr is defined and ansible_service_mgr == 'systemd'
+
+- name: Enable Redis service
+  become: yes
+  service:
+    name: redis
+    enabled: yes
+  notify:
+    - start redis
+
+- name: Remove tmp files
+  become: yes
+  file:
+    path: "/tmp/{{ redis_tarball }}"
+    state: absent
