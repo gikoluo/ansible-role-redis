@@ -1,17 +1,17 @@
 #
 # fetch .tar.gz files
 #
-
 - stat:
-    path: "{{ redis.download_path }}/{{ redis_tarball }}.tar.gz"
+    path: "{{ redis_download_path }}/{{ redis_rpm }}.rpm"
   register: st
 
-- debug: msg="Download {{ redis_tarball_url }} to {{ redis.download_path }}/{{ redis_tarball }}.tar.gz"
+- debug: msg="Download {{ redis_rpm_url }} to {{ redis_download_path }}/{{ redis_rpm }}.rpm"
 
 - name: get Redis tarball (as tar.gz file)
   get_url:
-    url:     "{{ redis_tarball_url }}"
-    dest:    "{{ redis.download_path }}/{{ redis_tarball }}.tar.gz"
+    url:     "{{ redis_rpm_url }}"
+    dest:    "{{ redis_download_path }}/{{ redis_rpm }}.rpm"
     mode:    0644
   when: redis_download_from_remote and not st.stat.exists
+
 

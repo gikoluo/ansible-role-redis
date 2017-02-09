@@ -1,33 +1,18 @@
 ---
 
 
-- include: tasks/set-role-variables.yml
+- include: set-role-variables.yml
 
-- name: Install Redis
-  include: install.yml
+- include: install.yml
+
+- include: config.yml
+
+
+- name: Start and enable redis
+  service:
+    name: redis
+    enabled: yes
+    state: started
   tags:
-    - build
+    - redis
 
-- name: Configure Redis
-  include: configure.yml
-  tags:
-    - configure
-
-
-- include: local_facts.yml
-  when: redis_local_facts|bool
-
-- name: "listen netword"
-  lineinfile:
-    dest: /etc/redis.conf
-    regexp: '^bind '
-    insertafter: '^# bind '
-    line: "bind 127.0.0.1 {{ ansible_all_ipv4_addresses[0] }}"
-
-
-- name: Start Redis.
-  service: name=redis state=restarted enabled=yes
-
-
-
-  

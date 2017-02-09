@@ -1,21 +1,19 @@
 ---
 galaxy_info:
-  author: Luo Chunhui
-  description: Highly configurable role to install Redis and Redis Sentinel from source
-  min_ansible_version: 1.6.3
+  author: Sam Doran
+  description: Install redis, in in-memory data structure store.
+  company: ""
   license: MIT
+  min_ansible_version: 2.0
+
   platforms:
-    - name: Ubuntu
-      versions:
-        - all
-    - name: Debian
-      versions:
-        - all
-    - name: EL
-      versions:
-        - 6
-  categories:
+  - name: EL
+    versions:
+      - 6
+      - 7
+
+  galaxy_tags:
+    - redis
     - database
-    - database:nosql
 
 dependencies: []

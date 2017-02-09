@@ -1,47 +1,34 @@
 ---
 
-- name: "Copy tar gz"
+
+- name: "Copy RPM"
   become: yes
   copy:
-    src: "{{ redis_download_path }}/{{ redis_tarball }}.tar.gz"
-    dest: "/tmp/{{ redis_tarball }}.tar.gz"
-    
-- name: Extract the Redis tarball
-  become: yes
-  unarchive:
-    src: "/tmp/{{ redis_tarball }}.tar.gz"
-    dest: "/tmp/"
-    copy: no
-    creates: "/tmp/{{ redis_tarball }}"
+    src: "{{ redis_download_path }}/{{ redis_rpm }}.rpm"
+    dest: "/tmp/{{ redis_rpm }}.rpm"
 
-- name: Install Redis
-  become: yes
-  command: "cp -R /tmp/{{ redis_tarball }} {{ redis.install_dir }}"
-  args:
-    creates: "{{ redis.install_dir }}"
-    removes: "/tmp/{{ redis_tarball }}"
+- name: Install the Redis rpm from local rpm
+  yum:
+    name: "/tmp/{{ redis_rpm }}.rpm"
+    state: present
 
 
-- name: Ensure Systemd Service Configuraiton
-  become: yes
-  template:
-    src: redis.service.j2
-    dest: /etc/systemd/system/redis.service
-    mode: 0764
-  notify:
-    - start redis
-  when: ansible_service_mgr is defined and ansible_service_mgr == 'systemd'
+- name: Get redis version
+  command: redis-cli -p {{ redis_port }} --version
+  register: redis_version_check
+  changed_when: False
+  tags:
+    - redis
+    - redis-version
+    - redis-selinux
+    - redis-config
 
-- name: Enable Redis service
-  become: yes
-  service:
-    name: redis
-    enabled: yes
-  notify:
-    - start redis
 
-- name: Remove tmp files
-  become: yes
-  file:
-    path: "/tmp/{{ redis_tarball }}"
-    state: absent
+- name: Set redis_version
+  set_fact:
+    redis_version: "{{ redis_version_check.stdout.split()[1][:3] }}"
+  tags:
+    - redis
+    - redis-version
+    - redis-selinux
+    - redis-config

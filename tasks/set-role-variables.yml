@@ -5,8 +5,9 @@
 
 - name: compose url for downloading file, if necessary
   set_fact:
-    redis_tarball: redis-{{ redis.version }}
+    redis_rpm: "redis-{{ redis_version }}-1.el7.remi.x86_64"
+    
 - name: compose url for downloading file, if necessary
   set_fact:
-    redis_tarball_url:  "{{ redis.download_base_url }}/{{ redis_tarball }}.tar.gz"
+    redis_rpm_url:  "{{ redis_download_base_url }}/{{ redis_rpm }}.rpm"
 
