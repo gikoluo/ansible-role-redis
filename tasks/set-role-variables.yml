@@ -5,7 +5,7 @@
 
 - name: compose url for downloading file, if necessary
   set_fact:
-    redis_rpm: "redis-{{ redis_version }}-1.el7.remi.x86_64"
+    redis_rpm: "redis-{{ redis_version }}-1.el{{ ansible_distribution_major_version }}.remi.x86_64"
     
 - name: compose url for downloading file, if necessary
   set_fact:

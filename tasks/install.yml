@@ -1,17 +1,21 @@
 ---
 
 
-- name: "Copy RPM"
-  become: yes
-  copy:
-    src: "{{ redis_download_path }}/{{ redis_rpm }}.rpm"
-    dest: "/tmp/{{ redis_rpm }}.rpm"
+# - name: "Copy RPM"
+#   become: yes
+#   copy:
+#     src: "{{ redis_download_path }}/{{ redis_rpm }}.rpm"
+#     dest: "/tmp/{{ redis_rpm }}.rpm"
+
+# - name: Install the Redis rpm from local rpm
+#   yum:
+#     name: "/tmp/{{ redis_rpm }}.rpm"
+#     state: present
 
 - name: Install the Redis rpm from local rpm
   yum:
-    name: "/tmp/{{ redis_rpm }}.rpm"
+    name: "redis"
     state: present
-
 
 - name: Get redis version
   command: redis-cli -p {{ redis_port }} --version
